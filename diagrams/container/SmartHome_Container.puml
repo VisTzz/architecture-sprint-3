@@ -1,0 +1,30 @@
+@startuml
+!include <c4/C4_Container.puml>
+
+title Smart home system
+
+Person_Ext(customer, User, "")
+System_Ext(api_access, "External Device", "")
+
+System_Boundary(sms, "Smart home system") {
+    Container(frontend, "Web UI", react)
+    Container(api_gateway, "(Api Gateway/LB)", Nginx)
+    Container(device_management_service, "Device Management Service", C#, "")
+    Container(telemetry_service, "Telemetry Service", C#, "")    
+    ContainerDb(db_dms, "Device Management Service Storage", "PostgreSQL", "")
+    ContainerDb(db_telemetry, "Telemetry Storage", "PostgreSQL", "")
+}
+
+Rel(customer, frontend, "Uses", "JSON/https")
+Rel(frontend, api_gateway, "Uses", "JSON/https")
+
+Rel(api_gateway, device_management_service, "Uses", "JSON/https")
+Rel(api_gateway, telemetry_service, "Uses", "JSON/https")
+
+
+Rel(device_management_service, db_dms, "Read/Write")
+Rel(telemetry_service, db_telemetry, "Read/Write")
+
+Rel(device_management_service, api_access, "Uses", "JSON/https")
+Rel(telemetry_service, api_access, "Uses", "JSON/https")
+@enduml

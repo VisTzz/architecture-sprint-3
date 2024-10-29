@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+    name: device-managment
+    labels:
+      env: prod
+      app: main
+spec:
+    containers:
+      - name: container-apache
+        image: vistzz/device-management:latest
+        ports:
+          - containerPort: 80
+        env:
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "8080"

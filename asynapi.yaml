@@ -1,0 +1,59 @@
+asyncapi: 3.0.0
+info:
+  title: Smart home system
+  version: 0.1.0
+channels:
+  devicesCommand:
+    address: device-management/device_commands
+    messages:
+      sendCommandMessage:
+        description: A message describing that device should be.
+        payload:
+          type: object
+          additionalProperties: false
+          properties:
+            device_id:
+              type: string
+            command:
+              type: string
+  deviceStatuses:
+    address: device-management/device_statuses
+    messages:
+      receiveDeviceStatusMessage:
+        description: A message describing device status.
+        payload:
+          type: object
+          additionalProperties: false
+          properties:
+            device_id:
+              type: string
+            status:
+              type: string
+  sensorData:
+    address: device_telemetry/sensor_data
+    messages:
+      receiveSensorDataMessage:
+        description: A message describing device sensor data.
+        payload:
+          type: object
+          additionalProperties: false
+          properties:
+            device_id:
+              type: string
+            data:
+              type: string
+            dataType:
+              type: string
+operations:
+  sendCommand:
+    action: send
+    channel:
+      $ref: '#/channels/devicesCommand'
+  receiveDeviceStatus:
+    action: receive
+    channel:
+      $ref: '#/channels/deviceStatuses'
+  receiveSensorData:
+    action: receive
+    channel:
+      $ref: '#/channels/sensorData'

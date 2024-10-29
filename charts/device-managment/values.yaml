@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  repository: vistzz/device-management
+  #repository: nginx
+  # This sets the pull policy for images.
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: latest
+
+container:
+  port: 8080
+
+service:
+  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  type: ClusterIP
+  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+  port: 8081  
+
+postgresql:
+  auth:
+    postgresPassword: "somepassword"
+    username: myuser
+    password: mypassword
+    database: mydatabase
+  service:
+    port: 5432
+  primary:
+    initdb:
+      scripts:
+        init.sql: |
+          CREATE USER myuser WITH ENCRYPTED PASSWORD 'mypassword';
+          CREATE DATABASE mydatabase;
+          GRANT ALL PRIVILEGES ON DATABASE mydatabase TO myuser;
+
+kafka:
+  bootstrapServers: "my-kafka:9092"
+  groupId: "device-managment-group"
+  deviceCommandsTopic: "device_commands"
+  deviceStatusTopic: "device_statuses"
+  
+env:
+  kafkaBootstrapServers: "my-kafka:9092"
+  kafkaTopic: "my-topic"
+  postgresqlConnectionString: "Host=device-managment-postgresql;Database=mydatabase;Username=myuser;Password=mypassword"

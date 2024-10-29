@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: device-managment-deployment
+    labels:
+      env: prod
+      app: device-managment-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: mytest
+  template:
+    metadata:
+      labels:
+        project: mytest
+    spec:
+      containers:
+        - name: mytest-apache
+          image: vistzz/device-management:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "8080"

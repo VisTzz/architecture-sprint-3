@@ -1,0 +1,15 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title System Context diagram for Smart Home System.
+
+Person(customer, "User", "A user, with account.")
+System(smart_home_system, "Smart home System", "Manage device, send commands, collect tellemetry.")
+
+System_Ext(ext_device, "External device", "External device.")
+
+Rel(customer, smart_home_system, "Uses")
+Rel_Neighbor(smart_home_system, ext_device, "Sends commands and get device data", "Uses")
+@enduml

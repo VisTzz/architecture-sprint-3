@@ -1,0 +1,44 @@
+@startuml
+!include <c4/C4_Component.puml>
+
+title Smart Home System
+
+Person_Ext(customer, User, "")
+System_Ext(api_access, "External Device", "")
+
+Container(message_bus, "Message Bus", "Kafka")
+Container(api_backend, "API backend", "")
+Container(api_gateway, "Nginx", "Api gateway, auth user")
+ContainerDb(db_dms, "Device Management Service Storage", "PostgreSQL", "")
+ContainerDb(db_users, "User storage base", "PostgreSQL", "")
+ContainerDb(db_telemetry, "Devices telemetry storage base", "PostgreSQL", "")
+
+Container_Boundary(dms, "Device Management Service") {   
+    Component(device_management, "Manage device controller", "", "")
+    Component(device_status, "Device status controller", "", "")
+    Rel(device_management, api_access, "", "")
+    Rel(device_management, message_bus, "", "")
+    Rel(device_management, db_dms, "Read & write to", "")
+
+    Rel(device_status, api_access, "", "")
+    Rel(device_status, message_bus, "", "")
+    Rel(device_status, db_dms, "Read & write to", "")
+    
+}
+
+Container_Boundary(telemetry, "Telemetry Service") {   
+    Component(device_telemetry, "Telemetry controller", "", "")  
+  
+    Rel(device_telemetry, "db_telemetry", "", "Read & write to")
+    Rel(device_telemetry, "api_access", "", "JSON")
+    Rel(device_telemetry, message_bus, "", "")
+}
+
+
+
+Rel(customer, api_gateway, "", "JSON")
+Rel_R(api_gateway, db_users, "", "Read & write to")
+Rel(api_gateway, api_backend, "", "JSON")
+Rel_L(api_backend, message_bus, "", "JSON")
+
+@enduml

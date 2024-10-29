@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: {{ .Release.Name }}-deployment
+ labels:
+   app: {{ .Chart.Name }}
+spec:
+ replicas: 1
+ selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+ template:
+   metadata:
+     labels:
+       app: {{ .Chart.Name }}
+   spec:
+    containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.container.port }}
+        env:
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "8080"
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+            - name: ConnectionStrings__DefaultConnection
+              value: "{{ .Values.env.postgresqlConnectionString }}"
+            - name: Kafka__ProducerSettings__BootstrapServers
+              value: "{{ .Values.kafka.bootstrapServers }}"
+            - name: Kafka__ConsumerSettings__BootstrapServers
+              value: "{{ .Values.kafka.bootstrapServers }}"
+            - name: Kafka__ConsumerSettings__GroupId
+              value: "{{ .Values.kafka.groupId }}"
+            - name: Kafka__DeviceCommandsTopic
+              value: "{{ .Values.kafka.deviceCommandsTopic }}"
+            - name: Kafka__DeviceStatuses
+              value: "{{ .Values.kafka.device_statuses }}"
+
+ 
