@@ -6,10 +6,33 @@ LAYOUT_WITH_LEGEND()
 title System Context diagram for Smart Home System.
 
 Person(customer, "User", "A user, with account.")
-System(smart_home_system, "Smart home System", "Manage device, send commands, collect tellemetry.")
+Boundary(shs, "Smart Home System") {
+    Boundary(d1, "Domain: Manage Device") {
+        System(manage_device, "Subdomain: Manage Device", "Send commands.")
+        Boundary(s1, "Context: Scenario") {
+            System(manage_scenario, "Subdomain: Manage Scenario", "Manage Scenario by user.")
+            System(scenario_action, "Subdomain: Scenario action", "System action scenario ")
+        }
+    }
+    Boundary(d2, "Domain: Telemetry") {
+        Boundary(s3, "Context: Tellemetry") {
+            System(collect_tellemetry, "Subdomain: Collect Telemetry from device", "Collect tellemetry.")
+            System(show_tellemetry, "Subdomain: Show Telemetry", "Show Telemetry.")
+        }
+    }
+}
+
 
 System_Ext(ext_device, "External device", "External device.")
 
-Rel(customer, smart_home_system, "Uses")
-Rel_Neighbor(smart_home_system, ext_device, "Sends commands and get device data", "Uses")
+Rel(customer, manage_device, "")
+Rel(customer, show_tellemetry, "")
+Rel(customer, manage_scenario, "")
+
+Rel(scenario_action, manage_device, "")
+
+Rel_Neighbor(collect_tellemetry, ext_device, "", "")
+Rel_D(manage_device, ext_device, "", "")
+
+
 @enduml
