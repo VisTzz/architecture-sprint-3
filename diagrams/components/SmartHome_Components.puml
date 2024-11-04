@@ -12,26 +12,72 @@ Container(api_gateway, "Nginx", "Api gateway, auth user")
 ContainerDb(db_dms, "Device Management Service Storage", "PostgreSQL", "")
 ContainerDb(db_users, "User storage base", "PostgreSQL", "")
 ContainerDb(db_telemetry, "Devices telemetry storage base", "PostgreSQL", "")
+ContainerDb(db_administration, "Administration storage base", "PostgreSQL", "")
+ContainerDb(db_scenario, "Scenario storage base", "PostgreSQL", "")
 
 Container_Boundary(dms, "Device Management Service") {   
-    Component(device_management, "Manage device controller", "", "")
+
+    Component(device_management_controller, "Manage device controller", "", "")
+    Component(device_management, "Manage device", "", "")
     Component(device_status, "Device status controller", "", "")
+
+
     Rel(device_management, api_access, "", "")
-    Rel(device_management, message_bus, "", "")
+    Rel_U(device_management_controller, message_bus, "", "")
     Rel(device_management, db_dms, "Read & write to", "")
 
     Rel(device_status, api_access, "", "")
-    Rel(device_status, message_bus, "", "")
     Rel(device_status, db_dms, "Read & write to", "")
+
+    Rel_R(device_management_controller, device_management, "", "")
+    Rel_D(device_management_controller, device_status, "", "")
     
 }
 
 Container_Boundary(telemetry, "Telemetry Service") {   
-    Component(device_telemetry, "Telemetry controller", "", "")  
+    
+    Component(device_telemetry_collector, "Telemetry collector", "", "Get data from device") 
+    Component(device_telemetry, "Telemetry controller", "", "")
+    Component(device_telemetry_data, "Telemetry data controller", "", "Send data for user")
   
-    Rel(device_telemetry, "db_telemetry", "", "Read & write to")
-    Rel(device_telemetry, "api_access", "", "JSON")
-    Rel(device_telemetry, message_bus, "", "")
+    Rel(device_telemetry_collector, "db_telemetry", "", "Read & write to")
+    Rel(device_telemetry_data, "db_telemetry", "", "Read & write to")
+    Rel(device_telemetry_collector, "api_access", "", "JSON")
+    Rel_U(device_telemetry, message_bus, "", "")
+
+    Rel_R(device_telemetry, device_telemetry_collector, "", "")
+    Rel_D(device_telemetry, device_telemetry_data, "", "")
+}
+
+Container_Boundary(home_administration, "Home administration Service") {
+   Component(home_administration_controller, "Home controller", "", "")
+   Component(home_administration_modules, "Home modules", "", "Manage modules") 
+   Component(home_administration_devices, "Home devices", "", "Manage devices")
+   Component(home_administration_scenario, "Home scenario", "", "Manage scenario")
+
+   Rel_D(home_administration_controller, home_administration_modules, "", "")
+   Rel_D(home_administration_controller, home_administration_devices, "", "")
+   Rel_D(home_administration_controller, home_administration_scenario, "", "")
+
+   Rel_D(home_administration_modules, db_administration, "", "")
+   Rel_D(home_administration_devices, db_administration, "", "")
+   Rel_D(home_administration_scenario, db_administration, "", "")
+
+   Rel_U(home_administration_controller, message_bus, "", "")
+}
+
+Container_Boundary(scenario, "Scenario Service") {
+   Component(scenario_controller, "Scenario controller", "", "")
+   Component(scenario_manage, "Manage Scenario", "", "")
+   Component(scenario_schedule, "Scenario scheduller", "", "")
+
+   Rel_D(scenario_controller, scenario_manage, "", "")
+   Rel_D(scenario_controller, scenario_schedule, "", "")
+
+   Rel_D(scenario_manage, db_scenario, "", "")
+   Rel_D(scenario_schedule, db_scenario, "", "")
+
+   Rel_U(scenario_controller, message_bus, "", "")
 }
 
 
