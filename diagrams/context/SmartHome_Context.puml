@@ -1,0 +1,48 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title System Context diagram for Smart Home System.
+
+Person(customer, "User", "A user, with account.")
+Boundary(shs, "Smart Home System") {
+    Boundary(d1, "Domain: Manage Device") {
+        System(manage_device, "Subdomain: Manage Device", "Send commands.")
+    }
+    Boundary(d2, "Domain: Telemetry") {
+        Boundary(s3, "Context: Tellemetry") {
+            System(collect_tellemetry, "Subdomain: Collect Telemetry from device", "Collect tellemetry.")
+            System(data_tellemetry, "Subdomain: Data Telemetry", "Show Telemetry.")
+        }
+    }
+    Boundary(d3, "Domain: Home Administration") {
+        Boundary(s4, "Context: Manage Home Devices") {
+            System(home_manage_devices, "Subdomain: Manage device", "Add/delete device.")
+            System(home_manage_modules, "Subdomain: Manage modules", "Add/delete module.")            
+        }
+       System(home_manage_scenario, "Subdomain: Manage home scenario", "Add/edit/delete scenario.")
+    }
+
+    Boundary(d4, "Domain: Scenario") {
+       System(scenario_manage, "Subdomain: Manage Scenario", "Add/delete/edit scenario.")
+       System(scenario_scheduler, "Subdomain: Scenario scheduler", "Schedule tasks.")
+    }
+}
+
+
+System_Ext(ext_device, "External device", "External device.")
+
+Rel(customer, manage_device, "Send command")
+Rel(customer, data_tellemetry, "Get data device")
+Rel(customer, s4, "Add/Edit/Delete devices or modules")
+Rel(customer, home_manage_scenario, "Add/Edit/Delete scenario at home")
+
+
+Rel_Neighbor(collect_tellemetry, ext_device, "", "")
+Rel_D(manage_device, ext_device, "", "")
+
+Rel_D(home_manage_scenario, scenario_manage, "Send command")
+Rel_D(scenario_scheduler, manage_device, "Send command")
+
+@enduml

@@ -1,0 +1,67 @@
+@startuml
+
+class User {
++ id
++ name
++password
++active
++created_at
++updated_on
+}
+
+class House{
++ id
++ user_id
++ address
++ created_at
++ updated_on
+}
+
+class Device {
++ id
++ type
++ serial_number
++ status
++ created_at
++ updated_on
+}
+
+class Device_type{
++ id
++ type
+}
+
+class Telemetry{
++ id
++ device_id
++ value
++ created_at
+}
+
+class Scenario{
++ id
++ house_id
++ device_id
++ module_id
++ action
++ created_at
++ updated_on
+}
+
+class Module{
++ id
++ device_id
++ created_at
+}
+
+User ||..|{ House
+House||..|{ Device 
+House||..|{ Module
+House||..|{ Scenario
+Scenario||..|| Device
+Scenario||..|| Module
+Module||..|{ Device
+Device ||..|| Device_type
+Device ||..|{ Telemetry
+
+@enduml
